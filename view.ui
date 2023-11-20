@@ -284,7 +284,7 @@
         <rect>
          <x>10</x>
          <y>20</y>
-         <width>82</width>
+         <width>91</width>
          <height>17</height>
         </rect>
        </property>
@@ -435,6 +435,11 @@
        </widget>
       </widget>
      </widget>
+    </widget>
+    <widget class="QWidget" name="tab">
+     <attribute name="title">
+      <string>Page</string>
+     </attribute>
     </widget>
    </widget>
    <widget class="QPushButton" name="build_button">

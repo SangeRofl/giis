@@ -230,7 +230,7 @@ class Okr(Figure):
         self.last_x = 0
         self.last_y = self.R
         self.d = 2 - 2 * self.R
-        self.cur_state.add_message(f"self.x = {self.last_x}, y = {self.last_y}, Plot(x, y) = ({int(self.last_x)}, {int(self.last_y)})")
+        self.cur_state.add_message(f"d = {self.d}, sig = {self.sig}, sig1 = {self.sig1}, x = {self.last_x}, y = {self.last_y}, Plot(x, y) = ({self.last_x}, {self.last_y})")
         self.draw_point(int(self.last_x+self.x), int(self.last_y+self.y))
 
     # промежуточный шаг
@@ -243,26 +243,26 @@ class Okr(Figure):
             else:
                 self.last_x += 1
                 self.last_y -= 1
-                self.d += 2 * self.x - 2 * self.y + 2
+                self.d += 2 * self.last_x - 2 * self.last_y + 2
         elif self.d < 0:
             self.sig = 2 * self.d + 2 * self.last_y - 1
             if self.sig <= 0:
                 self.last_x = self.last_x + 1
-                self.d = self.d - 2 * self.last_x + 1
+                self.d = self.d + 2 * self.last_x + 1
             else:
                 self.last_x += 1
                 self.last_y -= 1
-                self.d += 2 * self.x - 2 * self.y + 2
+                self.d += 2 * self.last_x - 2 * self.last_y + 2
         else:
             self.last_x += 1
             self.last_y -= 1
-            self.d += 2 * self.x - 2 * self.y + 2
+            self.d += 2 * self.last_x - 2 * self.last_y + 2
 
-        self.cur_state.add_message(f"x = {self.last_x}, y = {self.last_y}, Plot(x, y) = ({int(self.last_x)}, {int(self.last_y)})")
+        self.cur_state.add_message(f"d = {self.d}, sig = {self.sig}, sig1 = {self.sig1}, x = {self.last_x}, y = {self.last_y}, Plot(x, y) = ({self.last_x}, {self.last_y})")
         self.draw_point(int(self.last_x+self.x), int(self.last_y+self.y))
 
     def check_state(self):
-        if self.last_y > self.pred:
+        if self.last_y <= self.pred:
             self.status = Status.FINISHED
 
     def save_state(self):
