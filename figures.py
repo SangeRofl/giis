@@ -184,8 +184,8 @@ class SegmentWoo(Figure):
         if self.main_axis == Axis.x:
             self.last_x += 1
             real_y = (self.last_x - self.x1) * self.dy / self.dx + self.y1
-            if real_y == self.y2:
-                self.draw_point(self.last_x, self.y2)
+            if real_y-int(real_y) == 0:
+                self.draw_point(self.last_x, int(real_y))
             else:
                 px1_y, px2_y = math.ceil(real_y), math.floor(real_y)
                 px1_y_intense, px2_y_intense = abs(real_y - px2_y), abs(real_y - px1_y)
@@ -194,8 +194,8 @@ class SegmentWoo(Figure):
         else:
             self.last_y += 1
             real_x = (self.last_y - self.y1) * self.dx / self.dy + self.x1
-            if real_x == self.x2:
-                self.draw_point(self.x2, self.last_y)
+            if real_x - int(real_x) == 0:
+                self.draw_point(int(real_x), self.last_y)
             else:
                 py1_x, py2_x = math.ceil(real_x), math.floor(real_x)
                 py1_x_intense, py2_x_intense = real_x - py2_x , py1_x - real_x
