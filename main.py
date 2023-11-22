@@ -5,11 +5,13 @@ from PyQt6 import QtWidgets, QtGui, QtCore
 from PyQt6.QtWidgets import QApplication
 from model import Model
 import figures
+import time
+
 
 import sys
 
-W = 821
-H = 701
+W = 600
+H = 600
 
 
 class MainWindow(QtWidgets.QMainWindow):
@@ -17,20 +19,23 @@ class MainWindow(QtWidgets.QMainWindow):
         super().__init__()
         self.setup_ui()
         self.pm = QPixmap(W, H)
+        self.real_pm = QPixmap(W, H)
+        self.real_qp = QPainter(self.real_pm)
         self.pm.fill(QColor(255, 255, 255, 255))
         self.qp = QPainter(self.pm)
+        self.pm_cur_pos = QtCore.QPoint(0, 0)
         self.mouse_cur_pos = QtCore.QPoint(-1, -1)
         self.lbl_pressed = False
-        self.field_label.setPixmap(self.pm)
         self.field_label.update()
         self.model = Model(W, H)
         self.connect_signals()
         self.pix_rat = 1
+        self.update()
         self.show()
 
     def setup_ui(self):
         self.setObjectName("MainWindow")
-        self.resize(1280, 720)
+        self.resize(1059, 624)
         sizePolicy = QtWidgets.QSizePolicy(QtWidgets.QSizePolicy.Policy.Fixed, QtWidgets.QSizePolicy.Policy.Fixed)
         sizePolicy.setHorizontalStretch(0)
         sizePolicy.setVerticalStretch(0)
@@ -39,13 +44,13 @@ class MainWindow(QtWidgets.QMainWindow):
         self.centralwidget = QtWidgets.QWidget(parent=self)
         self.centralwidget.setObjectName("centralwidget")
         self.field_label = QtWidgets.QLabel(parent=self.centralwidget)
-        self.field_label.setGeometry(QtCore.QRect(450, 9, 821, 701))
+        self.field_label.setGeometry(QtCore.QRect(450, 9, 600, 600))
         self.field_label.setStyleSheet("background-color: rgb(255, 255, 255);")
         self.field_label.setText("")
         self.field_label.setIndent(-1)
         self.field_label.setObjectName("field_label")
         self.coords_label = QtWidgets.QLabel(parent=self.centralwidget)
-        self.coords_label.setGeometry(QtCore.QRect(1170, 680, 121, 21))
+        self.coords_label.setGeometry(QtCore.QRect(970, 580, 121, 21))
         font = QtGui.QFont()
         font.setPointSize(10)
         font.setBold(True)
@@ -53,7 +58,7 @@ class MainWindow(QtWidgets.QMainWindow):
         self.coords_label.setFont(font)
         self.coords_label.setObjectName("coords_label")
         self.tabWidget = QtWidgets.QTabWidget(parent=self.centralwidget)
-        self.tabWidget.setGeometry(QtCore.QRect(10, 0, 421, 341))
+        self.tabWidget.setGeometry(QtCore.QRect(10, 0, 421, 291))
         self.tabWidget.setObjectName("tabWidget")
         self.segment_tab = QtWidgets.QWidget()
         self.segment_tab.setObjectName("segment_tab")
@@ -96,15 +101,15 @@ class MainWindow(QtWidgets.QMainWindow):
         self.algorithm_group_box.setGeometry(QtCore.QRect(10, 150, 221, 111))
         self.algorithm_group_box.setObjectName("algorithm_group_box")
         self.cda_radio_button = QtWidgets.QRadioButton(parent=self.algorithm_group_box)
-        self.cda_radio_button.setGeometry(QtCore.QRect(10, 20, 82, 21))
+        self.cda_radio_button.setGeometry(QtCore.QRect(10, 20, 171, 21))
         self.cda_radio_button.setChecked(True)
         self.cda_radio_button.setObjectName("cda_radio_button")
         self.brezenh_radio_button = QtWidgets.QRadioButton(parent=self.algorithm_group_box)
-        self.brezenh_radio_button.setGeometry(QtCore.QRect(10, 50, 141, 21))
+        self.brezenh_radio_button.setGeometry(QtCore.QRect(10, 50, 201, 21))
         self.brezenh_radio_button.setChecked(False)
         self.brezenh_radio_button.setObjectName("brezenh_radio_button")
         self.woo_radio_button = QtWidgets.QRadioButton(parent=self.algorithm_group_box)
-        self.woo_radio_button.setGeometry(QtCore.QRect(10, 80, 91, 21))
+        self.woo_radio_button.setGeometry(QtCore.QRect(10, 80, 211, 21))
         self.woo_radio_button.setObjectName("woo_radio_button")
         self.tabWidget.addTab(self.segment_tab, "")
         self.second_order_lines_tab = QtWidgets.QWidget()
@@ -113,17 +118,17 @@ class MainWindow(QtWidgets.QMainWindow):
         self.groupBox.setGeometry(QtCore.QRect(20, 10, 361, 251))
         self.groupBox.setObjectName("groupBox")
         self.okr_radioButton = QtWidgets.QRadioButton(parent=self.groupBox)
-        self.okr_radioButton.setGeometry(QtCore.QRect(10, 20, 82, 17))
+        self.okr_radioButton.setGeometry(QtCore.QRect(10, 20, 201, 17))
         self.okr_radioButton.setChecked(True)
         self.okr_radioButton.setObjectName("okr_radioButton")
         self.ell_radioButton_2 = QtWidgets.QRadioButton(parent=self.groupBox)
-        self.ell_radioButton_2.setGeometry(QtCore.QRect(10, 40, 82, 21))
+        self.ell_radioButton_2.setGeometry(QtCore.QRect(10, 40, 181, 21))
         self.ell_radioButton_2.setObjectName("ell_radioButton_2")
         self.gip_radioButton_3 = QtWidgets.QRadioButton(parent=self.groupBox)
-        self.gip_radioButton_3.setGeometry(QtCore.QRect(10, 60, 82, 21))
+        self.gip_radioButton_3.setGeometry(QtCore.QRect(10, 60, 171, 21))
         self.gip_radioButton_3.setObjectName("gip_radioButton_3")
         self.par_radioButton_4 = QtWidgets.QRadioButton(parent=self.groupBox)
-        self.par_radioButton_4.setGeometry(QtCore.QRect(10, 80, 82, 21))
+        self.par_radioButton_4.setGeometry(QtCore.QRect(10, 80, 181, 21))
         self.par_radioButton_4.setObjectName("par_radioButton_4")
         self.groupBox_2 = QtWidgets.QGroupBox(parent=self.groupBox)
         self.groupBox_2.setGeometry(QtCore.QRect(10, 100, 341, 141))
@@ -142,7 +147,7 @@ class MainWindow(QtWidgets.QMainWindow):
         self.ok_y_spinBox_3.setMaximum(1280)
         self.ok_y_spinBox_3.setObjectName("ok_y_spinBox_3")
         self.label_7 = QtWidgets.QLabel(parent=self.groupBox_2)
-        self.label_7.setGeometry(QtCore.QRect(10, 80, 47, 13))
+        self.label_7.setGeometry(QtCore.QRect(10, 80, 47, 16))
         self.label_7.setObjectName("label_7")
         self.ok_r_spinBox_4 = QtWidgets.QSpinBox(parent=self.groupBox_2)
         self.ok_r_spinBox_4.setGeometry(QtCore.QRect(120, 40, 71, 22))
@@ -153,17 +158,20 @@ class MainWindow(QtWidgets.QMainWindow):
         self.label_8.setGeometry(QtCore.QRect(120, 20, 47, 13))
         self.label_8.setObjectName("label_8")
         self.tabWidget.addTab(self.second_order_lines_tab, "")
+        self.tab = QtWidgets.QWidget()
+        self.tab.setObjectName("tab")
+        self.tabWidget.addTab(self.tab, "")
         self.build_button = QtWidgets.QPushButton(parent=self.centralwidget)
-        self.build_button.setGeometry(QtCore.QRect(10, 690, 91, 23))
+        self.build_button.setGeometry(QtCore.QRect(20, 595, 91, 23))
         self.build_button.setObjectName("build_button")
         self.clear_button = QtWidgets.QPushButton(parent=self.centralwidget)
-        self.clear_button.setGeometry(QtCore.QRect(340, 690, 91, 23))
+        self.clear_button.setGeometry(QtCore.QRect(280, 595, 91, 23))
         self.clear_button.setObjectName("clear_button")
         self.console_textEdit = QtWidgets.QTextEdit(parent=self.centralwidget)
-        self.console_textEdit.setGeometry(QtCore.QRect(10, 350, 421, 241))
+        self.console_textEdit.setGeometry(QtCore.QRect(10, 300, 421, 231))
         self.console_textEdit.setObjectName("console_textEdit")
         self.debug_groupBox = QtWidgets.QGroupBox(parent=self.centralwidget)
-        self.debug_groupBox.setGeometry(QtCore.QRect(10, 600, 251, 51))
+        self.debug_groupBox.setGeometry(QtCore.QRect(10, 540, 251, 51))
         self.debug_groupBox.setObjectName("debug_groupBox")
         self.debug_cancel_button = QtWidgets.QPushButton(parent=self.debug_groupBox)
         self.debug_cancel_button.setGeometry(QtCore.QRect(170, 20, 75, 23))
@@ -175,10 +183,10 @@ class MainWindow(QtWidgets.QMainWindow):
         self.debug_next_button.setGeometry(QtCore.QRect(90, 20, 75, 23))
         self.debug_next_button.setObjectName("debug_next_button")
         self.debug_checkBox = QtWidgets.QCheckBox(parent=self.centralwidget)
-        self.debug_checkBox.setGeometry(QtCore.QRect(110, 695, 121, 17))
+        self.debug_checkBox.setGeometry(QtCore.QRect(120, 600, 121, 17))
         self.debug_checkBox.setObjectName("debug_checkBox")
         self.select_data_button = QtWidgets.QPushButton(parent=self.centralwidget)
-        self.select_data_button.setGeometry(QtCore.QRect(10, 660, 171, 23))
+        self.select_data_button.setGeometry(QtCore.QRect(270, 560, 171, 23))
         self.select_data_button.setObjectName("select_data_button")
         self.setCentralWidget(self.centralwidget)
         self.field_label.setMouseTracking(True)
@@ -211,6 +219,7 @@ class MainWindow(QtWidgets.QMainWindow):
         self.label_8.setText(_translate("MainWindow", "R"))
         self.tabWidget.setTabText(self.tabWidget.indexOf(self.second_order_lines_tab),
                                   _translate("MainWindow", "Линии 2-го порядка"))
+        self.tabWidget.setTabText(self.tabWidget.indexOf(self.tab), _translate("MainWindow", "Page"))
         self.build_button.setText(_translate("MainWindow", "Построить"))
         self.clear_button.setText(_translate("MainWindow", "Отчистить"))
         self.debug_groupBox.setTitle(_translate("MainWindow", "Отладка"))
@@ -262,7 +271,7 @@ class MainWindow(QtWidgets.QMainWindow):
             elif self.brezenh_radio_button.isChecked():
                 fig_cls = figures.SegmentBrez
             elif self.woo_radio_button.isChecked():
-                fig_cls = figures.SegmentCDA
+                fig_cls = figures.SegmentWoo
         elif self.tabWidget.currentIndex() == 1:
             arg_dict['x'] = self.ok_x_spinBox_2.value()
             arg_dict['y'] = self.ok_y_spinBox_3.value()
@@ -274,12 +283,22 @@ class MainWindow(QtWidgets.QMainWindow):
         self.update()
 
     def update(self):
-        self.qp.drawPixmap(0, 0, self.model.pm)
-        self.field_label.setPixmap(self.pm)
+        self.pm.fill(QColor(255,255,255,255))
+        print(self.pix_rat)
+        self.qp.drawPixmap(self.pm_cur_pos.x(), self.pm_cur_pos.y(), self.model.pm)
+        cropped = self.pm.copy(0, 0, W // self.pix_rat, H // self.pix_rat)
+        scaled = cropped.scaled(W, H)
+        self.real_qp.drawPixmap(0, 0, scaled)
+        if self.pix_rat >= 10:
+            for i in range(0, W):
+                self.real_qp.drawLine(i*self.pix_rat, 0, self.pix_rat*i, H * self.pix_rat)
+            for i in range(0, H):
+                self.real_qp.drawLine(0, i * self.pix_rat, W * self.pix_rat, self.pix_rat * i)
+        self.field_label.setPixmap(self.real_pm)
 
 
     def cw(self, text: str):
-        self.console_textEdit.setText(self.console_textEdit.toPlainText()+"\n"+text)
+        self.console_textEdit.setText(self.console_textEdit.toPlainText()+text+"\n")
 
     def tab_changed(self, tab_index: int):
         print(tab_index)
@@ -293,10 +312,15 @@ class MainWindow(QtWidgets.QMainWindow):
 
     def lbl_wheel_event_handler(self, e):
         angle = 1 if e.angleDelta().y() > 0 else -1
-        self.pix_rat += angle
-        self.pm = self.pm.scaled(W*self.pix_rat, H*self.pix_rat)
+        if not(angle < 0 and self.pix_rat <= 1):
+            if not ((self.pix_rat == W or self.pix_rat == H) and angle > 0):
+                self.pix_rat += angle
+            while (W / self.pix_rat - W // self.pix_rat != 0 and H / self.pix_rat - H // self.pix_rat != 0):
+                self.pix_rat += angle
+
+        self.update()
         #self.pm.setDevicePixelRatio(self.pm.devicePixelRatio() - angle)
-        self.field_label.setPixmap(self.pm)
+        #self.field_label.setPixmap(self.pm)
 
 
     def lbl_pressed_event_handler(self, e):
@@ -310,8 +334,10 @@ class MainWindow(QtWidgets.QMainWindow):
         if e.pos().x() > 0 and e.pos().y() > 0 and self.mouse_cur_pos.x() > 0 and self.mouse_cur_pos.y() > 0 and self.lbl_pressed:
             pos = e.pos() - self.mouse_cur_pos
             self.pm.scroll(pos.x(), pos.y(), self.pm.rect())
+            self.pm_cur_pos += pos
             #print(e.pos()-self.mouse_cur_pos)
-            self.field_label.setPixmap(self.pm)
+            #self.field_label.setPixmap(self.pm)
+            self.update()
         self.coords_label.setText(f"x: {e.pos().x()} | y: {self.field_label.height()-e.pos().y()-1}")
         self.mouse_cur_pos = e.pos()
             # self.field_label.move(e.pos()-e.oldPos())
@@ -327,7 +353,7 @@ class MainWindow(QtWidgets.QMainWindow):
         return super().event(e)
 
     def field_paint_handler(self, e):
-        self.field_label.setPixmap(self.pm)
+        self.field_label.setPixmap(self.real_pm)
 
 
 app = QApplication(sys.argv)

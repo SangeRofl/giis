@@ -2,6 +2,7 @@ from PyQt6.QtGui import QPixmap, QPainter, QColor, QPen
 from PyQt6.QtWidgets import QApplication
 from abc import ABC, abstractmethod
 from enum import Enum
+import math
 
 
 def sign(x):
@@ -102,10 +103,10 @@ class Figure(ABC):
         self.states.append(self.cur_state)
         self.cur_state = FigureState()
 
-    def draw_point(self, x, y, color: QColor = (0, 0, 0, 255)):
+    def draw_point(self, x, y, color: QColor = QColor(0, 0, 0, 255)):
         real_x = x
         real_y = self.rect_height-y-1
-        self.qp.setPen(QPen(QColor(0, 0, 0, 255), 1))
+        self.qp.setPen(QPen(color, 1))
         self.qp.drawPoint(real_x, real_y)
         self.cur_state.add_pixel(real_x, real_y, color)
 
@@ -126,6 +127,7 @@ class SegmentCDA(Figure):
         self.last_x = None
         self.last_y = None
         self.length = max(abs(self.x2 - self.x1), abs(self.y2 - self.y1))
+        self.length = 1 if self.length == 0 else self.length
         self.cur_length = -1
         self.dx = (self.x2 - self.x1) / self.length
         self.dy = (self.y2 - self.y1) / self.length
@@ -143,6 +145,65 @@ class SegmentCDA(Figure):
         self.cur_length += 1
         self.cur_state.add_message(f"Шаг {self.cur_length}: x = {self.last_x}, y = {self.last_y}, Plot(x, y) = ({int(self.last_x)}, {int(self.last_y)})")
         self.draw_point(int(self.last_x), int(self.last_y))
+
+    def check_state(self):
+        if self.cur_length == self.length:
+            self.status = Status.FINISHED
+
+    def save_state(self):
+        self.cur_state.data['last_x'] = self.last_x
+        self.cur_state.data['last_y'] = self.last_y
+        self.cur_state.data['cur_length'] = self.cur_length
+        super().save_state()
+
+
+class SegmentWoo(Figure):
+    def __init__(self, x1: int, y1: int, x2: int, y2: int, rect_width, rect_height):
+        super().__init__(rect_width, rect_height)
+        self.x1 = x1
+        self.y1 = y1
+        self.x2 = x2
+        self.y2 = y2
+        self.dx = (self.x2 - self.x1)
+        self.dy = (self.y2 - self.y1)
+        self.last_x = None
+        self.last_y = None
+        self.main_axis = Axis.x if abs(self.dx) > abs(self.dy) else Axis.y
+        self.length = max(abs(self.x2 - self.x1), abs(self.y2 - self.y1))
+        self.cur_length = -1
+
+
+    def first_step(self):
+        self.last_x = self.x1
+        self.last_y = self.y1
+        self.cur_length += 1
+        self.cur_state.add_message(f"Шаг {self.cur_length}")
+        self.draw_point(self.last_x, self.last_y)
+
+    def intermediate_step(self):
+        if self.main_axis == Axis.x:
+            self.last_x += 1
+            real_y = (self.last_x - self.x1) * self.dy / self.dx + self.y1
+            if real_y == self.y2:
+                self.draw_point(self.last_x, self.y2)
+            else:
+                px1_y, px2_y = math.ceil(real_y), math.floor(real_y)
+                px1_y_intense, px2_y_intense = abs(real_y - px2_y), abs(real_y - px1_y)
+                self.draw_point(self.last_x, px1_y, QColor(0, 0, 0, int(255 * px1_y_intense)))
+                self.draw_point(self.last_x, px2_y, QColor(0, 0, 0, int(255 * px2_y_intense)))
+        else:
+            self.last_y += 1
+            real_x = (self.last_y - self.y1) * self.dx / self.dy + self.x1
+            if real_x == self.x2:
+                self.draw_point(self.x2, self.last_y)
+            else:
+                py1_x, py2_x = math.ceil(real_x), math.floor(real_x)
+                py1_x_intense, py2_x_intense = real_x - py2_x , py1_x - real_x
+                self.draw_point(py1_x, self.last_y, QColor(0, 0, 0, int(255 * py1_x_intense)))
+                self.draw_point(py2_x, self.last_y, QColor(0, 0, 0, int(255 * py2_x_intense)))
+        self.cur_length += 1
+        self.cur_state.add_message(f"Шаг {self.cur_length}")
+
 
     def check_state(self):
         if self.cur_length == self.length:
@@ -260,6 +321,9 @@ class Okr(Figure):
 
         self.cur_state.add_message(f"d = {self.d}, sig = {self.sig}, sig1 = {self.sig1}, x = {self.last_x}, y = {self.last_y}, Plot(x, y) = ({self.last_x}, {self.last_y})")
         self.draw_point(int(self.last_x+self.x), int(self.last_y+self.y))
+        self.draw_point(int(-self.last_x + self.x), int(self.last_y + self.y))
+        self.draw_point(int(self.last_x + self.x), int(-self.last_y + self.y))
+        self.draw_point(int(-self.last_x + self.x), int(-self.last_y + self.y))
 
     def check_state(self):
         if self.last_y <= self.pred:
