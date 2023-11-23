@@ -297,41 +297,52 @@ class Okr(Figure):
         self.sig = None
         self.sig1 = None
         self.pred = 0
+        self.cur_step = -1
 
     # первый шаг
     def first_step(self):
+        self.cur_step += 1
         self.last_x = 0
         self.last_y = self.R
         self.d = 2 - 2 * self.R
-        self.cur_state.add_message(f"d = {self.d}, sig = {self.sig}, sig1 = {self.sig1}, x = {self.last_x}, y = {self.last_y}, Plot(x, y) = ({self.last_x}, {self.last_y})")
+        self.cur_state.add_message(f"Шаг {self.cur_step}: d = , sig = {self.sig}, sig1 = {self.sig1}, pix = , x = {self.last_x}, y = {self.last_y}, d_i+1 = {self.d}, Plot(x, y) = ({self.last_x + self.x}, {self.last_y + self.y})")
         self.draw_point(int(self.last_x+self.x), int(self.last_y+self.y))
+        self.draw_point(int(self.last_x + self.x), int(-self.last_y + self.y))
 
     # промежуточный шаг
     def intermediate_step(self):
+        self.cur_step += 1
+        last_d = self.d
+        pix = "error"
         if self.d > 0:
             self.sig1 = 2 * self.d - 2 * self.last_x - 1
             if self.sig1 > 0:
                 self.last_y = self.last_y - 1
                 self.d = self.d - 2 * self.last_y + 1
+                pix = "V"
             else:
                 self.last_x += 1
                 self.last_y -= 1
                 self.d += 2 * self.last_x - 2 * self.last_y + 2
+                pix = "D"
         elif self.d < 0:
             self.sig = 2 * self.d + 2 * self.last_y - 1
             if self.sig <= 0:
                 self.last_x = self.last_x + 1
                 self.d = self.d + 2 * self.last_x + 1
+                pix = "H"
             else:
                 self.last_x += 1
                 self.last_y -= 1
                 self.d += 2 * self.last_x - 2 * self.last_y + 2
+                pix = "D"
         else:
             self.last_x += 1
             self.last_y -= 1
             self.d += 2 * self.last_x - 2 * self.last_y + 2
+            pix = "D"
 
-        self.cur_state.add_message(f"d = {self.d}, sig = {self.sig}, sig1 = {self.sig1}, x = {self.last_x}, y = {self.last_y}, Plot(x, y) = ({self.last_x}, {self.last_y})")
+        self.cur_state.add_message(f"Шаг {self.cur_step}: d = {last_d}, sig = {self.sig}, sig1 = {self.sig1}, pix = {pix}, x = {self.last_x}, y = {self.last_y}, d_i+1 = {self.d}, Plot(x, y) = ({self.last_x+self.x}, {self.last_y+self.y})")
         self.draw_point(int(self.last_x+self.x), int(self.last_y+self.y))
         self.draw_point(int(-self.last_x + self.x), int(self.last_y + self.y))
         self.draw_point(int(self.last_x + self.x), int(-self.last_y + self.y))
@@ -344,8 +355,161 @@ class Okr(Figure):
     def save_state(self):
         self.cur_state.data['last_x'] = self.last_x
         self.cur_state.data['last_y'] = self.last_y
+        self.cur_state.data['cur_step'] = self.cur_step
+        self.cur_state.data['d'] = self.d
         super().save_state()
 
+
+class Ellipse(Figure):
+    def __init__(self, x: int, y: int, a: int, b: int, rect_width, rect_height):
+        super().__init__(rect_width, rect_height)
+        self.x = x
+        self.y = y
+        self.a = a
+        self.b = b
+        self.d = None
+        self.last_x = None
+        self.last_y = None
+        self.sig = None
+        self.sig1 = None
+        self.pred = 0
+        self.cur_step = -1
+
+    # первый шаг
+    def first_step(self):
+        self.cur_step += 1
+        self.last_x = 0
+        self.last_y = self.b
+        self.d = self.a**2 + self.b**2 - 2 * (self.a**2) * self.b
+        self.cur_state.add_message(f"Шаг {self.cur_step}: d = , sig = {self.sig}, sig1 = {self.sig1}, pix = , x = {self.last_x}, y = {self.last_y}, d_i+1 = {self.d}, Plot(x, y) = ({self.last_x + self.x}, {self.last_y + self.y})")
+        self.draw_point(int(self.last_x+self.x), int(self.last_y+self.y))
+        self.draw_point(int(self.last_x + self.x), int(-self.last_y + self.y))
+
+    # промежуточный шаг
+    def intermediate_step(self):
+        self.cur_step += 1
+        last_d = self.d
+        pix = "error"
+        if self.d > 0:
+            self.sig1 = 2 * (self.d - self.b**2 * self.last_x) - 1
+            if self.sig1 > 0:
+                self.last_y = self.last_y - 1
+                self.d = self.d + self.a**2 * (1-self.last_y*2)
+                pix = "V"
+            else:
+                self.last_x += 1
+                self.last_y -= 1
+                self.d += (self.b**2) * (self.last_x*2 + 1) + (self.a**2) * (1 - self.last_y * 2)
+                pix = "D"
+        elif self.d < 0:
+            self.sig = 2 * (self.d + self.a**2 * self.last_y) - 1
+            if self.sig <= 0:
+                self.last_x = self.last_x + 1
+                self.d = self.d + self.b**2 * (self.last_x*2 + 1)
+                pix = "H"
+            else:
+                self.last_x += 1
+                self.last_y -= 1
+                self.d += (self.b**2) * (self.last_x*2 + 1) + (self.a**2) * (1 - self.last_y * 2)
+                pix = "D"
+        else:
+            self.last_x += 1
+            self.last_y -= 1
+            self.d += (self.b**2) * (self.last_x*2 + 1) + (self.a**2) * (1 - self.last_y * 2)
+            pix = "D"
+
+        self.cur_state.add_message(f"Шаг {self.cur_step}: d = {last_d}, sig = {self.sig}, sig1 = {self.sig1}, pix = {pix}, x = {self.last_x}, y = {self.last_y}, d_i+1 = {self.d}, Plot(x, y) = ({self.last_x+self.x}, {self.last_y+self.y})")
+        self.draw_point(int(self.last_x+self.x), int(self.last_y+self.y))
+        self.draw_point(int(-self.last_x + self.x), int(self.last_y + self.y))
+        self.draw_point(int(self.last_x + self.x), int(-self.last_y + self.y))
+        self.draw_point(int(-self.last_x + self.x), int(-self.last_y + self.y))
+
+    def check_state(self):
+        if self.last_y <= self.pred:
+            self.status = Status.FINISHED
+
+    def save_state(self):
+        self.cur_state.data['last_x'] = self.last_x
+        self.cur_state.data['last_y'] = self.last_y
+        self.cur_state.data['cur_step'] = self.cur_step
+        self.cur_state.data['d'] = self.d
+        super().save_state()
+
+
+class Gip(Figure):
+    def __init__(self, x: int, y: int, a: int, b: int, rect_width, rect_height):
+        super().__init__(rect_width, rect_height)
+        self.x = x
+        self.y = y
+        self.a = a
+        self.b = b
+        self.d = None
+        self.last_x = None
+        self.last_y = None
+        self.sig = None
+        self.sig1 = None
+        self.pred = 2000
+        self.cur_step = -1
+
+    # первый шаг
+    def first_step(self):
+        self.cur_step += 1
+        self.last_x = abs(self.a)
+        self.last_y = 0
+        self.d = self.b**2 - self.a**2 + 2 * self.a * self.b**2
+        self.cur_state.add_message(f"Шаг {self.cur_step}: d = , sig = {self.sig}, sig1 = {self.sig1}, pix = , x = {self.last_x}, y = {self.last_y}, d_i+1 = {self.d}, Plot(x, y) = ({self.last_x + self.x}, {self.last_y + self.y})")
+        self.draw_point(int(self.last_x+self.x), int(self.last_y+self.y))
+        self.draw_point(int(self.last_x + self.x), int(-self.last_y + self.y))
+
+    # промежуточный шаг
+    def intermediate_step(self):
+        self.cur_step += 1
+        last_d = self.d
+        pix = "error"
+        if self.d > 0:
+            self.sig1 = 2 * (self.d - self.b ** 2 * self.last_x) - self.b ** 2
+            if self.sig1 > 0:
+                self.last_y = self.last_y + 1
+                self.d = self.d - self.a**2 * (1+self.last_y*2)
+                pix = "V"
+            else:
+                self.last_x += 1
+                self.last_y += 1
+                self.d += (self.b**2) * (self.last_x*2 + 1) - (self.a**2) * (1 + self.last_y * 2)
+                pix = "D"
+        elif self.d < 0:
+            self.sig = 2 * (self.d + self.a**2 * self.last_y) + self.a**2
+            if self.sig <= 0:
+                self.last_x = self.last_x + 1
+                self.d = self.d + self.b**2 * (self.last_x*2 + 1)
+                pix = "H"
+            else:
+                self.last_x += 1
+                self.last_y += 1
+                self.d += (self.b**2) * (self.last_x*2 + 1) - (self.a**2) * (1 + self.last_y * 2)
+                pix = "D"
+        else:
+            self.last_x += 1
+            self.last_y += 1
+            self.d += (self.b**2) * (self.last_x*2 + 1) - (self.a**2) * (1 + self.last_y * 2)
+            pix = "D"
+
+        self.cur_state.add_message(f"Шаг {self.cur_step}: d = {last_d}, sig = {self.sig}, sig1 = {self.sig1}, pix = {pix}, x = {self.last_x}, y = {self.last_y}, d_i+1 = {self.d}, Plot(x, y) = ({self.last_x+self.x}, {self.last_y+self.y})")
+        self.draw_point(int(self.last_x+self.x), int(self.last_y+self.y))
+        self.draw_point(int(-self.last_x + self.x), int(self.last_y + self.y))
+        self.draw_point(int(self.last_x + self.x), int(-self.last_y + self.y))
+        self.draw_point(int(-self.last_x + self.x), int(-self.last_y + self.y))
+
+    def check_state(self):
+        if self.last_x >= self.pred:
+            self.status = Status.FINISHED
+
+    def save_state(self):
+        self.cur_state.data['last_x'] = self.last_x
+        self.cur_state.data['last_y'] = self.last_y
+        self.cur_state.data['cur_step'] = self.cur_step
+        self.cur_state.data['d'] = self.d
+        super().save_state()
 
 if __name__ == "__main__":
     app = QApplication([])

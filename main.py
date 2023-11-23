@@ -74,21 +74,21 @@ class MainWindow(QtWidgets.QMainWindow):
         self.label_4.setObjectName("label_4")
         self.y2_spinBox_4 = QtWidgets.QSpinBox(parent=self.coords_groupBox)
         self.y2_spinBox_4.setGeometry(QtCore.QRect(180, 90, 71, 22))
-        self.y2_spinBox_4.setMinimum(0)
-        self.y2_spinBox_4.setMaximum(599)
+        self.y2_spinBox_4.setMinimum(-1000)
+        self.y2_spinBox_4.setMaximum(1000)
         self.y2_spinBox_4.setObjectName("y2_spinBox_4")
         self.label_5 = QtWidgets.QLabel(parent=self.coords_groupBox)
         self.label_5.setGeometry(QtCore.QRect(180, 68, 47, 16))
         self.label_5.setObjectName("label_5")
         self.x2_spinBox_3 = QtWidgets.QSpinBox(parent=self.coords_groupBox)
         self.x2_spinBox_3.setGeometry(QtCore.QRect(180, 40, 71, 22))
-        self.x2_spinBox_3.setMinimum(0)
-        self.x2_spinBox_3.setMaximum(599)
+        self.x2_spinBox_3.setMinimum(-1000)
+        self.x2_spinBox_3.setMaximum(1000)
         self.x2_spinBox_3.setObjectName("x2_spinBox_3")
         self.y1_spinBox_2 = QtWidgets.QSpinBox(parent=self.coords_groupBox)
         self.y1_spinBox_2.setGeometry(QtCore.QRect(20, 90, 71, 22))
-        self.y1_spinBox_2.setMinimum(0)
-        self.y1_spinBox_2.setMaximum(599)
+        self.y1_spinBox_2.setMinimum(-1000)
+        self.y1_spinBox_2.setMaximum(1000)
         self.y1_spinBox_2.setObjectName("y1_spinBox_2")
         self.label_2 = QtWidgets.QLabel(parent=self.coords_groupBox)
         self.label_2.setGeometry(QtCore.QRect(20, 20, 47, 13))
@@ -98,8 +98,8 @@ class MainWindow(QtWidgets.QMainWindow):
         self.label_3.setObjectName("label_3")
         self.x1_spinBox = QtWidgets.QSpinBox(parent=self.coords_groupBox)
         self.x1_spinBox.setGeometry(QtCore.QRect(20, 40, 71, 22))
-        self.x1_spinBox.setMinimum(0)
-        self.x1_spinBox.setMaximum(599)
+        self.x1_spinBox.setMinimum(-1000)
+        self.x1_spinBox.setMaximum(1000)
         self.x1_spinBox.setObjectName("x1_spinBox")
         self.algorithm_group_box = QtWidgets.QGroupBox(parent=self.segment_tab)
         self.algorithm_group_box.setGeometry(QtCore.QRect(10, 150, 221, 111))
@@ -138,29 +138,38 @@ class MainWindow(QtWidgets.QMainWindow):
         self.groupBox_2.setGeometry(QtCore.QRect(10, 100, 341, 141))
         self.groupBox_2.setObjectName("groupBox_2")
         self.label_6 = QtWidgets.QLabel(parent=self.groupBox_2)
-        self.label_6.setGeometry(QtCore.QRect(10, 20, 47, 13))
+        self.label_6.setGeometry(QtCore.QRect(10, 20, 111, 16))
         self.label_6.setObjectName("label_6")
-        self.ok_x_spinBox_2 = QtWidgets.QSpinBox(parent=self.groupBox_2)
-        self.ok_x_spinBox_2.setGeometry(QtCore.QRect(10, 40, 71, 22))
-        self.ok_x_spinBox_2.setMinimum(0)
-        self.ok_x_spinBox_2.setMaximum(599)
-        self.ok_x_spinBox_2.setObjectName("ok_x_spinBox_2")
-        self.ok_y_spinBox_3 = QtWidgets.QSpinBox(parent=self.groupBox_2)
-        self.ok_y_spinBox_3.setGeometry(QtCore.QRect(10, 100, 71, 22))
-        self.ok_y_spinBox_3.setMinimum(0)
-        self.ok_y_spinBox_3.setMaximum(599)
-        self.ok_y_spinBox_3.setObjectName("ok_y_spinBox_3")
+        self.sec_line_spinBox_1 = QtWidgets.QSpinBox(parent=self.groupBox_2)
+        self.sec_line_spinBox_1.setGeometry(QtCore.QRect(10, 40, 71, 22))
+        self.sec_line_spinBox_1.setMinimum(-1000)
+        self.sec_line_spinBox_1.setMaximum(1000)
+        self.sec_line_spinBox_1.setObjectName("ok_x_spinBox_1")
+        self.sec_line_spinBox_2 = QtWidgets.QSpinBox(parent=self.groupBox_2)
+        self.sec_line_spinBox_2.setGeometry(QtCore.QRect(10, 100, 71, 22))
+        self.sec_line_spinBox_2.setMinimum(-1000)
+        self.sec_line_spinBox_2.setMaximum(1000)
+        self.sec_line_spinBox_2.setProperty("value", 1)
+        self.sec_line_spinBox_2.setObjectName("ok_y_spinBox_2")
         self.label_7 = QtWidgets.QLabel(parent=self.groupBox_2)
-        self.label_7.setGeometry(QtCore.QRect(10, 80, 47, 16))
+        self.label_7.setGeometry(QtCore.QRect(10, 80, 111, 16))
         self.label_7.setObjectName("label_7")
-        self.ok_r_spinBox_4 = QtWidgets.QSpinBox(parent=self.groupBox_2)
-        self.ok_r_spinBox_4.setGeometry(QtCore.QRect(120, 40, 71, 22))
-        self.ok_r_spinBox_4.setMinimum(0)
-        self.ok_r_spinBox_4.setMaximum(599)
-        self.ok_r_spinBox_4.setObjectName("ok_r_spinBox_4")
+        self.sec_line_spinBox_3 = QtWidgets.QSpinBox(parent=self.groupBox_2)
+        self.sec_line_spinBox_3.setGeometry(QtCore.QRect(160, 40, 71, 22))
+        self.sec_line_spinBox_3.setMinimum(-1000)
+        self.sec_line_spinBox_3.setMaximum(1000)
+        self.sec_line_spinBox_3.setObjectName("ok_r_spinBox_3")
         self.label_8 = QtWidgets.QLabel(parent=self.groupBox_2)
-        self.label_8.setGeometry(QtCore.QRect(120, 20, 47, 13))
+        self.label_8.setGeometry(QtCore.QRect(160, 20, 131, 16))
         self.label_8.setObjectName("label_8")
+        self.sec_line_spinBox_4 = QtWidgets.QSpinBox(parent=self.groupBox_2)
+        self.sec_line_spinBox_4.setGeometry(QtCore.QRect(160, 100, 71, 22))
+        self.sec_line_spinBox_4.setMinimum(-1000)
+        self.sec_line_spinBox_4.setMaximum(1000)
+        self.sec_line_spinBox_4.setObjectName("sec_line_spinBox_4")
+        self.label_9 = QtWidgets.QLabel(parent=self.groupBox_2)
+        self.label_9.setGeometry(QtCore.QRect(160, 80, 121, 16))
+        self.label_9.setObjectName("label_9")
         self.tabWidget.addTab(self.second_order_lines_tab, "")
         self.tab = QtWidgets.QWidget()
         self.tab.setObjectName("tab")
@@ -173,6 +182,8 @@ class MainWindow(QtWidgets.QMainWindow):
         self.clear_button.setObjectName("clear_button")
         self.console_textEdit = QtWidgets.QTextEdit(parent=self.centralwidget)
         self.console_textEdit.setGeometry(QtCore.QRect(10, 300, 421, 231))
+        self.console_textEdit.setFocusPolicy(QtCore.Qt.FocusPolicy.StrongFocus)
+        self.console_textEdit.setReadOnly(True)
         self.console_textEdit.setObjectName("console_textEdit")
         self.debug_groupBox = QtWidgets.QGroupBox(parent=self.centralwidget)
         self.debug_groupBox.setGeometry(QtCore.QRect(10, 540, 251, 51))
@@ -202,6 +213,8 @@ class MainWindow(QtWidgets.QMainWindow):
         self.zoom_label.setObjectName("zoom_label")
         self.setCentralWidget(self.centralwidget)
         self.field_label.setMouseTracking(True)
+        self.label_9.setVisible(False)
+        self.sec_line_spinBox_4.setVisible(False)
 
         self.retranslate_ui()
         self.tabWidget.setCurrentIndex(0)
@@ -253,6 +266,9 @@ class MainWindow(QtWidgets.QMainWindow):
         self.debug_next_button.clicked.connect(self.debug_next_button_clicked_handler)
         self.debug_back_button.clicked.connect(self.debug_back_button_clicked_handler)
         self.select_data_button.clicked.connect(self.select_data_button_clicked_handler)
+        self.okr_radioButton.toggled.connect(self.okr_radioButton_toggled_handler)
+        self.ell_radioButton_2.toggled.connect(self.ell_radioButton_toggled_handler)
+        self.gip_radioButton_3.toggled.connect(self.ell_radioButton_toggled_handler)
         #self.algorithm_group_box.
         # self.timer = QTimer()
         # self.timer.timeout.connect(self.update)
@@ -282,7 +298,14 @@ class MainWindow(QtWidgets.QMainWindow):
             if self.tabWidget.currentIndex() == 0:
                 self.get_data_from_field(2)
             elif self.tabWidget.currentIndex() == 1:
-                self.get_data_from_field(3)
+                if self.okr_radioButton.isChecked():
+                    self.get_data_from_field(2)
+                elif self.ell_radioButton_2.isChecked():
+                    self.get_data_from_field(2)
+                elif self.gip_radioButton_3.isChecked():
+                    self.get_data_from_field(2)
+                else:
+                    pass
             else:
                 print("Unknown tab")
         else:
@@ -290,6 +313,23 @@ class MainWindow(QtWidgets.QMainWindow):
             self.field_data_select_mode = False
             self.data_from_field.clear()
             self.data_to_select_count = 0
+
+    def okr_radioButton_toggled_handler(self, status):
+        if status:
+            self.label_6.setText("x")
+            self.label_7.setText("y")
+            self.label_8.setText("R")
+            self.label_9.setVisible(False)
+            self.sec_line_spinBox_4.setVisible(False)
+
+    def ell_radioButton_toggled_handler(self, status):
+        if status:
+            self.label_6.setText("x")
+            self.label_7.setText("y")
+            self.label_8.setText("a")
+            self.label_9.setText("b")
+            self.label_9.setVisible(True)
+            self.sec_line_spinBox_4.setVisible(True)
 
     def build_graphics(self):
         arg_dict = dict()
@@ -306,11 +346,23 @@ class MainWindow(QtWidgets.QMainWindow):
             elif self.woo_radio_button.isChecked():
                 fig_cls = figures.SegmentWoo
         elif self.tabWidget.currentIndex() == 1:
-            arg_dict['x'] = self.ok_x_spinBox_2.value()
-            arg_dict['y'] = self.ok_y_spinBox_3.value()
-            arg_dict['R'] = self.ok_r_spinBox_4.value()
             if self.okr_radioButton.isChecked():
+                arg_dict['x'] = self.sec_line_spinBox_1.value()
+                arg_dict['y'] = self.sec_line_spinBox_2.value()
+                arg_dict['R'] = self.sec_line_spinBox_3.value()
                 fig_cls = figures.Okr
+            elif self.ell_radioButton_2.isChecked():
+                arg_dict['x'] = self.sec_line_spinBox_1.value()
+                arg_dict['y'] = self.sec_line_spinBox_2.value()
+                arg_dict['a'] = self.sec_line_spinBox_3.value()
+                arg_dict['b'] = self.sec_line_spinBox_4.value()
+                fig_cls = figures.Ellipse
+            elif self.gip_radioButton_3.isChecked():
+                arg_dict['x'] = self.sec_line_spinBox_1.value()
+                arg_dict['y'] = self.sec_line_spinBox_2.value()
+                arg_dict['a'] = self.sec_line_spinBox_3.value()
+                arg_dict['b'] = self.sec_line_spinBox_4.value()
+                fig_cls = figures.Gip
 
         self.model.add_figure(fig_cls, self.debug_checkBox.isChecked(), **arg_dict)
         self.update()
@@ -402,25 +454,27 @@ class MainWindow(QtWidgets.QMainWindow):
                 self.select_data_button.setText("Выбрать данные с холста")
                 self.build_from_field()
 
-
     def build_from_field(self):
         if self.tabWidget.currentIndex() == 0:
             self.x1_spinBox.setValue(self.data_from_field[0].x())
             self.y1_spinBox_2.setValue(self.data_from_field[0].y())
             self.x2_spinBox_3.setValue(self.data_from_field[1].x())
             self.y2_spinBox_4.setValue(self.data_from_field[1].y())
-            if self.cda_radio_button.isChecked():
-                fig_cls = figures.SegmentCDA
-            elif self.brezenh_radio_button.isChecked():
-                fig_cls = figures.SegmentBrez
-            elif self.woo_radio_button.isChecked():
-                fig_cls = figures.SegmentWoo
         elif self.tabWidget.currentIndex() == 1:
-            arg_dict['x'] = self.ok_x_spinBox_2.value()
-            arg_dict['y'] = self.ok_y_spinBox_3.value()
-            arg_dict['R'] = self.ok_r_spinBox_4.value()
             if self.okr_radioButton.isChecked():
-                fig_cls = figures.Okr
+                self.sec_line_spinBox_1.setValue(self.data_from_field[0].x())
+                self.sec_line_spinBox_2.setValue(self.data_from_field[0].y())
+                self.sec_line_spinBox_3.setValue(int(((self.data_from_field[0].x() - self.data_from_field[1].x())**2+(self.data_from_field[0].y() - self.data_from_field[1].y())**2)**0.5))
+            elif self.ell_radioButton_2.isChecked():
+                self.sec_line_spinBox_1.setValue(self.data_from_field[0].x())
+                self.sec_line_spinBox_2.setValue(self.data_from_field[0].y())
+                self.sec_line_spinBox_3.setValue(self.data_from_field[1].x() - self.data_from_field[0].x())
+                self.sec_line_spinBox_4.setValue(self.data_from_field[1].y() - self.data_from_field[0].y())
+            elif self.gip_radioButton_3.isChecked():
+                self.sec_line_spinBox_1.setValue(self.data_from_field[0].x())
+                self.sec_line_spinBox_2.setValue(self.data_from_field[0].y())
+                self.sec_line_spinBox_3.setValue(self.data_from_field[1].x() - self.data_from_field[0].x())
+                self.sec_line_spinBox_4.setValue(self.data_from_field[1].y() - self.data_from_field[0].y())
         self.data_from_field.clear()
         self.update()
 
