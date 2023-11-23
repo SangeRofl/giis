@@ -58,6 +58,10 @@ class Figure(ABC):
         self.cur_state = FigureState()
         self.states = []
 
+    def __del__(self):
+        del self.qp
+        del self
+
     def draw(self):
         self.clear()
         while self.status != Status.FINISHED:
@@ -177,32 +181,40 @@ class SegmentWoo(Figure):
         self.last_x = self.x1
         self.last_y = self.y1
         self.cur_length += 1
-        self.cur_state.add_message(f"Шаг {self.cur_length}")
+        self.cur_state.add_message(f"Шаг {self.cur_length}: {self.main_axis.value} = {self.last_x if self.main_axis == Axis.x else self.last_y}, plot({self.last_x}, {self.last_y});")
         self.draw_point(self.last_x, self.last_y)
 
     def intermediate_step(self):
+        self.cur_length += 1
         if self.main_axis == Axis.x:
-            self.last_x += 1
+            self.last_x += 1 if self.dx > 0 else -1
             real_y = (self.last_x - self.x1) * self.dy / self.dx + self.y1
             if real_y-int(real_y) == 0:
                 self.draw_point(self.last_x, int(real_y))
+                self.cur_state.add_message(
+                    f"Шаг {self.cur_length}: {self.main_axis.value} = {self.last_x if self.main_axis == Axis.x else self.last_y}, plot({self.last_x}, {int(real_y)});")
             else:
                 px1_y, px2_y = math.ceil(real_y), math.floor(real_y)
                 px1_y_intense, px2_y_intense = abs(real_y - px2_y), abs(real_y - px1_y)
                 self.draw_point(self.last_x, px1_y, QColor(0, 0, 0, int(255 * px1_y_intense)))
                 self.draw_point(self.last_x, px2_y, QColor(0, 0, 0, int(255 * px2_y_intense)))
+                self.cur_state.add_message(
+                    f"Шаг {self.cur_length}: {self.main_axis.value} = {self.last_x if self.main_axis == Axis.x else self.last_y}, y1 = {px1_y}, distance1 = {round(1-px1_y_intense, 2)}, y2 = {px2_y}, distance2 = {round(1-px2_y_intense, 2)}, plot({self.last_x}, {int(px1_y)}, {round(px1_y_intense, 2)}), plot({self.last_x}, {int(px2_y)}, {round(px2_y_intense, 2)});")
+
         else:
-            self.last_y += 1
+            self.last_y += 1 if self.dy > 0 else -1
             real_x = (self.last_y - self.y1) * self.dx / self.dy + self.x1
             if real_x - int(real_x) == 0:
                 self.draw_point(int(real_x), self.last_y)
+                self.cur_state.add_message(
+                    f"Шаг {self.cur_length}: {self.main_axis.value} = {self.last_x if self.main_axis == Axis.x else self.last_y}, plot({int(real_x)}, {self.last_y});")
             else:
                 py1_x, py2_x = math.ceil(real_x), math.floor(real_x)
                 py1_x_intense, py2_x_intense = real_x - py2_x , py1_x - real_x
                 self.draw_point(py1_x, self.last_y, QColor(0, 0, 0, int(255 * py1_x_intense)))
                 self.draw_point(py2_x, self.last_y, QColor(0, 0, 0, int(255 * py2_x_intense)))
-        self.cur_length += 1
-        self.cur_state.add_message(f"Шаг {self.cur_length}")
+                self.cur_state.add_message(
+                    f"Шаг {self.cur_length}: {self.main_axis.value} = {self.last_x if self.main_axis == Axis.x else self.last_y}, x1 = {py1_x}, distance1 = {round(1 - py1_x_intense, 2)}, x2 = {py2_x}, distance2 = {round(1 - py2_x_intense, 2)}, plot({int(py1_x)}, {self.last_y}, {round(py1_x_intense, 2)}), plot({int(py2_x)}, {self.last_y}, {round(py2_x_intense, 2)});")
 
 
     def check_state(self):
@@ -247,15 +259,15 @@ class SegmentBrez(Figure):
     def intermediate_step(self):
         if self.e >= 0:
             if self.main_axis == Axis.x:
-                self.last_y += 1
+                self.last_y += 1 if self.dy > 0 else -1
             else:
-                self.last_x += 1
+                self.last_x += 1 if self.dx > 0 else -1
             self.e -= 1
         if self.main_axis == Axis.x:
-            self.last_x += 1
+            self.last_x += 1 if self.dx > 0 else -1
             self.e = self.e + self.dy/self.dx
         else:
-            self.last_y += 1
+            self.last_y += 1 if self.dy > 0 else -1
             self.e = self.e + self.dx/self.dy
         self.cur_length += 1
         self.cur_state.add_message(f"Шаг {self.cur_length}: e = {self.e}, x = {self.last_x}, y = {self.last_y}, Plot(x, y) = ({int(self.last_x)}, {int(self.last_y)})")

@@ -42,7 +42,7 @@
    <widget class="QLabel" name="coords_label">
     <property name="geometry">
      <rect>
-      <x>970</x>
+      <x>930</x>
       <y>580</y>
       <width>121</width>
       <height>21</height>
@@ -50,10 +50,12 @@
     </property>
     <property name="font">
      <font>
-      <pointsize>10</pointsize>
-      <weight>75</weight>
+      <weight>99</weight>
       <bold>true</bold>
      </font>
+    </property>
+    <property name="styleSheet">
+     <string notr="true">font-weight: 1000;</string>
     </property>
     <property name="text">
      <string>x: | y:</string>
@@ -554,6 +556,28 @@
     </property>
     <property name="text">
      <string>Выбрать данные с холста</string>
+    </property>
+   </widget>
+   <widget class="QLabel" name="zoom_label">
+    <property name="geometry">
+     <rect>
+      <x>460</x>
+      <y>580</y>
+      <width>131</width>
+      <height>16</height>
+     </rect>
+    </property>
+    <property name="font">
+     <font>
+      <weight>99</weight>
+      <bold>true</bold>
+     </font>
+    </property>
+    <property name="styleSheet">
+     <string notr="true">font-weight: 1000;</string>
+    </property>
+    <property name="text">
+     <string>zoom:</string>
     </property>
    </widget>
   </widget>

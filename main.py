@@ -30,6 +30,10 @@ class MainWindow(QtWidgets.QMainWindow):
         self.model = Model(W, H)
         self.connect_signals()
         self.pix_rat = 1
+        self.field_data_select_mode = False
+        self.data_to_select_count = -1
+        self.data_from_field = []
+        self.timers_init()
         self.update()
         self.show()
 
@@ -50,12 +54,12 @@ class MainWindow(QtWidgets.QMainWindow):
         self.field_label.setIndent(-1)
         self.field_label.setObjectName("field_label")
         self.coords_label = QtWidgets.QLabel(parent=self.centralwidget)
-        self.coords_label.setGeometry(QtCore.QRect(970, 580, 121, 21))
+        self.coords_label.setGeometry(QtCore.QRect(930, 580, 121, 21))
         font = QtGui.QFont()
-        font.setPointSize(10)
         font.setBold(True)
-        font.setWeight(75)
+        font.setWeight(99)
         self.coords_label.setFont(font)
+        self.coords_label.setStyleSheet("font-weight: 1000;")
         self.coords_label.setObjectName("coords_label")
         self.tabWidget = QtWidgets.QTabWidget(parent=self.centralwidget)
         self.tabWidget.setGeometry(QtCore.QRect(10, 0, 421, 291))
@@ -70,21 +74,21 @@ class MainWindow(QtWidgets.QMainWindow):
         self.label_4.setObjectName("label_4")
         self.y2_spinBox_4 = QtWidgets.QSpinBox(parent=self.coords_groupBox)
         self.y2_spinBox_4.setGeometry(QtCore.QRect(180, 90, 71, 22))
-        self.y2_spinBox_4.setMinimum(1)
-        self.y2_spinBox_4.setMaximum(720)
+        self.y2_spinBox_4.setMinimum(0)
+        self.y2_spinBox_4.setMaximum(599)
         self.y2_spinBox_4.setObjectName("y2_spinBox_4")
         self.label_5 = QtWidgets.QLabel(parent=self.coords_groupBox)
         self.label_5.setGeometry(QtCore.QRect(180, 68, 47, 16))
         self.label_5.setObjectName("label_5")
         self.x2_spinBox_3 = QtWidgets.QSpinBox(parent=self.coords_groupBox)
         self.x2_spinBox_3.setGeometry(QtCore.QRect(180, 40, 71, 22))
-        self.x2_spinBox_3.setMinimum(1)
-        self.x2_spinBox_3.setMaximum(1280)
+        self.x2_spinBox_3.setMinimum(0)
+        self.x2_spinBox_3.setMaximum(599)
         self.x2_spinBox_3.setObjectName("x2_spinBox_3")
         self.y1_spinBox_2 = QtWidgets.QSpinBox(parent=self.coords_groupBox)
         self.y1_spinBox_2.setGeometry(QtCore.QRect(20, 90, 71, 22))
-        self.y1_spinBox_2.setMinimum(1)
-        self.y1_spinBox_2.setMaximum(720)
+        self.y1_spinBox_2.setMinimum(0)
+        self.y1_spinBox_2.setMaximum(599)
         self.y1_spinBox_2.setObjectName("y1_spinBox_2")
         self.label_2 = QtWidgets.QLabel(parent=self.coords_groupBox)
         self.label_2.setGeometry(QtCore.QRect(20, 20, 47, 13))
@@ -94,8 +98,8 @@ class MainWindow(QtWidgets.QMainWindow):
         self.label_3.setObjectName("label_3")
         self.x1_spinBox = QtWidgets.QSpinBox(parent=self.coords_groupBox)
         self.x1_spinBox.setGeometry(QtCore.QRect(20, 40, 71, 22))
-        self.x1_spinBox.setMinimum(1)
-        self.x1_spinBox.setMaximum(1280)
+        self.x1_spinBox.setMinimum(0)
+        self.x1_spinBox.setMaximum(599)
         self.x1_spinBox.setObjectName("x1_spinBox")
         self.algorithm_group_box = QtWidgets.QGroupBox(parent=self.segment_tab)
         self.algorithm_group_box.setGeometry(QtCore.QRect(10, 150, 221, 111))
@@ -138,21 +142,21 @@ class MainWindow(QtWidgets.QMainWindow):
         self.label_6.setObjectName("label_6")
         self.ok_x_spinBox_2 = QtWidgets.QSpinBox(parent=self.groupBox_2)
         self.ok_x_spinBox_2.setGeometry(QtCore.QRect(10, 40, 71, 22))
-        self.ok_x_spinBox_2.setMinimum(1)
-        self.ok_x_spinBox_2.setMaximum(1280)
+        self.ok_x_spinBox_2.setMinimum(0)
+        self.ok_x_spinBox_2.setMaximum(599)
         self.ok_x_spinBox_2.setObjectName("ok_x_spinBox_2")
         self.ok_y_spinBox_3 = QtWidgets.QSpinBox(parent=self.groupBox_2)
         self.ok_y_spinBox_3.setGeometry(QtCore.QRect(10, 100, 71, 22))
-        self.ok_y_spinBox_3.setMinimum(1)
-        self.ok_y_spinBox_3.setMaximum(1280)
+        self.ok_y_spinBox_3.setMinimum(0)
+        self.ok_y_spinBox_3.setMaximum(599)
         self.ok_y_spinBox_3.setObjectName("ok_y_spinBox_3")
         self.label_7 = QtWidgets.QLabel(parent=self.groupBox_2)
         self.label_7.setGeometry(QtCore.QRect(10, 80, 47, 16))
         self.label_7.setObjectName("label_7")
         self.ok_r_spinBox_4 = QtWidgets.QSpinBox(parent=self.groupBox_2)
         self.ok_r_spinBox_4.setGeometry(QtCore.QRect(120, 40, 71, 22))
-        self.ok_r_spinBox_4.setMinimum(1)
-        self.ok_r_spinBox_4.setMaximum(1280)
+        self.ok_r_spinBox_4.setMinimum(0)
+        self.ok_r_spinBox_4.setMaximum(599)
         self.ok_r_spinBox_4.setObjectName("ok_r_spinBox_4")
         self.label_8 = QtWidgets.QLabel(parent=self.groupBox_2)
         self.label_8.setGeometry(QtCore.QRect(120, 20, 47, 13))
@@ -188,6 +192,14 @@ class MainWindow(QtWidgets.QMainWindow):
         self.select_data_button = QtWidgets.QPushButton(parent=self.centralwidget)
         self.select_data_button.setGeometry(QtCore.QRect(270, 560, 171, 23))
         self.select_data_button.setObjectName("select_data_button")
+        self.zoom_label = QtWidgets.QLabel(parent=self.centralwidget)
+        self.zoom_label.setGeometry(QtCore.QRect(460, 580, 131, 16))
+        font = QtGui.QFont()
+        font.setBold(True)
+        font.setWeight(99)
+        self.zoom_label.setFont(font)
+        self.zoom_label.setStyleSheet("font-weight: 1000;")
+        self.zoom_label.setObjectName("zoom_label")
         self.setCentralWidget(self.centralwidget)
         self.field_label.setMouseTracking(True)
 
@@ -228,6 +240,7 @@ class MainWindow(QtWidgets.QMainWindow):
         self.debug_next_button.setText(_translate("MainWindow", "Далее"))
         self.debug_checkBox.setText(_translate("MainWindow", "Включить отладку"))
         self.select_data_button.setText(_translate("MainWindow", "Выбрать данные с холста"))
+        self.zoom_label.setText(_translate("MainWindow", "zoom:"))
 
     def connect_signals(self):
         self.build_button.clicked.connect(self.build_graphics)
@@ -239,6 +252,7 @@ class MainWindow(QtWidgets.QMainWindow):
         self.clear_button.clicked.connect(self.clear_pm)
         self.debug_next_button.clicked.connect(self.debug_next_button_clicked_handler)
         self.debug_back_button.clicked.connect(self.debug_back_button_clicked_handler)
+        self.select_data_button.clicked.connect(self.select_data_button_clicked_handler)
         #self.algorithm_group_box.
         # self.timer = QTimer()
         # self.timer.timeout.connect(self.update)
@@ -246,6 +260,10 @@ class MainWindow(QtWidgets.QMainWindow):
         # self.timer.start()
         # self.field_label.paintEvent = self.field_paint_handler
         self.field_label.event = self.mouse_move_handler
+
+    def timers_init(self):
+        self.field_click_time = 0
+        self.field_click_start = 0
 
     def debug_next_button_clicked_handler(self):
         self.model.debug_next()
@@ -257,6 +275,21 @@ class MainWindow(QtWidgets.QMainWindow):
     def debug_back_button_clicked_handler(self):
         self.model.debug_prev()
         self.update()
+
+    def select_data_button_clicked_handler(self):
+        if self.field_data_select_mode == False:
+            self.select_data_button.setText("Отмена")
+            if self.tabWidget.currentIndex() == 0:
+                self.get_data_from_field(2)
+            elif self.tabWidget.currentIndex() == 1:
+                self.get_data_from_field(3)
+            else:
+                print("Unknown tab")
+        else:
+            self.select_data_button.setText("Выбрать данные с холста")
+            self.field_data_select_mode = False
+            self.data_from_field.clear()
+            self.data_to_select_count = 0
 
     def build_graphics(self):
         arg_dict = dict()
@@ -284,21 +317,43 @@ class MainWindow(QtWidgets.QMainWindow):
 
     def update(self):
         self.pm.fill(QColor(255,255,255,255))
-        print(self.pix_rat)
         self.qp.drawPixmap(self.pm_cur_pos.x(), self.pm_cur_pos.y(), self.model.pm)
         cropped = self.pm.copy(0, 0, W // self.pix_rat, H // self.pix_rat)
         scaled = cropped.scaled(W, H)
         self.real_qp.drawPixmap(0, 0, scaled)
+        self.real_qp.drawLine((self.pm_cur_pos.x()-1)*self.pix_rat,
+                              (self.pm_cur_pos.y()+H+1)*self.pix_rat,
+                              (self.pm_cur_pos.x()+W+1)*self.pix_rat,
+                              (self.pm_cur_pos.y()+H+1)*self.pix_rat)
+        self.real_qp.drawLine((self.pm_cur_pos.x() - 1) * self.pix_rat,
+                              (self.pm_cur_pos.y() - 1) * self.pix_rat,
+                              (self.pm_cur_pos.x() - 1) * self.pix_rat,
+                              (self.pm_cur_pos.y() + H + 1) * self.pix_rat)
+        self.real_qp.drawLine((self.pm_cur_pos.x() - 1) * self.pix_rat,
+                              (self.pm_cur_pos.y() - 1) * self.pix_rat,
+                              (self.pm_cur_pos.x() + W + 1) * self.pix_rat,
+                              (self.pm_cur_pos.y() - 1) * self.pix_rat)
+        self.real_qp.drawLine((self.pm_cur_pos.x() + W + 1) * self.pix_rat,
+                              (self.pm_cur_pos.y() - 1) * self.pix_rat,
+                              (self.pm_cur_pos.x() + W + 1) * self.pix_rat,
+                              (self.pm_cur_pos.y() + H + 1) * self.pix_rat)
         if self.pix_rat >= 10:
-            for i in range(0, W):
-                self.real_qp.drawLine(i*self.pix_rat, 0, self.pix_rat*i, H * self.pix_rat)
-            for i in range(0, H):
-                self.real_qp.drawLine(0, i * self.pix_rat, W * self.pix_rat, self.pix_rat * i)
+            self.real_qp.setPen(QPen(QColor(0, 0, 0, 155), 1))
+            for i in range(0, W+1):
+                self.real_qp.drawLine(self.pm_cur_pos.x() * self.pix_rat + i * self.pix_rat,
+                                      self.pm_cur_pos.y() * self.pix_rat + 0,
+                                      self.pm_cur_pos.x() * self.pix_rat + self.pix_rat * i,
+                                      self.pm_cur_pos.y() * self.pix_rat + H * self.pix_rat)
+            for i in range(0, H+1):
+                self.real_qp.drawLine(self.pm_cur_pos.x() * self.pix_rat + 0,
+                                      self.pm_cur_pos.y() * self.pix_rat + i * self.pix_rat,
+                                      self.pm_cur_pos.x() * self.pix_rat + W * self.pix_rat,
+                                      self.pm_cur_pos.y() * self.pix_rat + self.pix_rat * i)
         self.field_label.setPixmap(self.real_pm)
 
-
     def cw(self, text: str):
-        self.console_textEdit.setText(self.console_textEdit.toPlainText()+text+"\n")
+        self.console_textEdit.append(text)
+        self.console_textEdit.ensureCursorVisible()
 
     def tab_changed(self, tab_index: int):
         print(tab_index)
@@ -317,34 +372,74 @@ class MainWindow(QtWidgets.QMainWindow):
                 self.pix_rat += angle
             while (W / self.pix_rat - W // self.pix_rat != 0 and H / self.pix_rat - H // self.pix_rat != 0):
                 self.pix_rat += angle
-
+        self.zoom_label.setText(f"zoom: {self.pix_rat}")
         self.update()
         #self.pm.setDevicePixelRatio(self.pm.devicePixelRatio() - angle)
         #self.field_label.setPixmap(self.pm)
 
+    def get_data_from_field(self, points_count: int):
+        self.field_data_select_mode = True
+        self.data_to_select_count = points_count
+
 
     def lbl_pressed_event_handler(self, e):
         self.lbl_pressed = True
+        self.field_click_start = time.time()
 
     def lbl_released_event_handler(self, e):
         self.lbl_pressed = False
         self.mouse_cur_pos = QtCore.QPoint(-1, -1)
+        field_click_end = time.time()
+        self.field_click_time = field_click_end - self.field_click_start
+        if self.field_data_select_mode == True and self.field_click_time <= 0.1:
+            x = e.pos().x() // self.pix_rat - self.pm_cur_pos.x()
+            y = H - (e.pos().y() // self.pix_rat - self.pm_cur_pos.y()) - 1
+            print(x, y)
+            self.data_from_field.append(QtCore.QPoint(x, y))
+            self.data_to_select_count -= 1
+            if self.data_to_select_count <= 0:
+                self.field_data_select_mode = False
+                self.select_data_button.setText("Выбрать данные с холста")
+                self.build_from_field()
+
+
+    def build_from_field(self):
+        if self.tabWidget.currentIndex() == 0:
+            self.x1_spinBox.setValue(self.data_from_field[0].x())
+            self.y1_spinBox_2.setValue(self.data_from_field[0].y())
+            self.x2_spinBox_3.setValue(self.data_from_field[1].x())
+            self.y2_spinBox_4.setValue(self.data_from_field[1].y())
+            if self.cda_radio_button.isChecked():
+                fig_cls = figures.SegmentCDA
+            elif self.brezenh_radio_button.isChecked():
+                fig_cls = figures.SegmentBrez
+            elif self.woo_radio_button.isChecked():
+                fig_cls = figures.SegmentWoo
+        elif self.tabWidget.currentIndex() == 1:
+            arg_dict['x'] = self.ok_x_spinBox_2.value()
+            arg_dict['y'] = self.ok_y_spinBox_3.value()
+            arg_dict['R'] = self.ok_r_spinBox_4.value()
+            if self.okr_radioButton.isChecked():
+                fig_cls = figures.Okr
+        self.data_from_field.clear()
+        self.update()
 
     def lbl_move_event_handler(self, e):
         if e.pos().x() > 0 and e.pos().y() > 0 and self.mouse_cur_pos.x() > 0 and self.mouse_cur_pos.y() > 0 and self.lbl_pressed:
             pos = e.pos() - self.mouse_cur_pos
-            self.pm.scroll(pos.x(), pos.y(), self.pm.rect())
             self.pm_cur_pos += pos
             #print(e.pos()-self.mouse_cur_pos)
             #self.field_label.setPixmap(self.pm)
             self.update()
-        self.coords_label.setText(f"x: {e.pos().x()} | y: {self.field_label.height()-e.pos().y()-1}")
+        self.coords_label.setText(f"x: {e.pos().x() // self.pix_rat - self.pm_cur_pos.x()} | y: {H - (e.pos().y() // self.pix_rat - self.pm_cur_pos.y()) - 1}")
         self.mouse_cur_pos = e.pos()
             # self.field_label.move(e.pos()-e.oldPos())
 
     def clear_pm(self):
         self.pm.fill(QColor(255, 255, 255, 255))
         self.field_label.setPixmap(self.pm)
+        self.model.clear()
+        self.update()
 
     def mouse_move_handler(self, e):
         print(1)

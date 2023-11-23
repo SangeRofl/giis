@@ -24,7 +24,9 @@ class Model:
 
     def clear(self):
         self.figures.clear()
-        self.cur_figure = None
+        self.update()
+        # del self.cur_figure # ??
+
 
     def set_figure_class(self, cls):
         self.fig_cls = cls
@@ -35,8 +37,9 @@ class Model:
         self.update()
 
     def debug_prev(self):
-        self.cur_figure.prev_draw_step()
-        self.update()
+        if len(self.cur_figure.states)>=2:
+            self.cur_figure.prev_draw_step()
+            self.update()
 
     def update(self):
         self.pm.fill(QColor(255, 255, 255, 255))
