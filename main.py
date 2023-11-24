@@ -269,6 +269,7 @@ class MainWindow(QtWidgets.QMainWindow):
         self.okr_radioButton.toggled.connect(self.okr_radioButton_toggled_handler)
         self.ell_radioButton_2.toggled.connect(self.ell_radioButton_toggled_handler)
         self.gip_radioButton_3.toggled.connect(self.ell_radioButton_toggled_handler)
+        self.par_radioButton_4.toggled.connect(self.par_radioButton_toggled_handler)
         #self.algorithm_group_box.
         # self.timer = QTimer()
         # self.timer.timeout.connect(self.update)
@@ -304,8 +305,10 @@ class MainWindow(QtWidgets.QMainWindow):
                     self.get_data_from_field(2)
                 elif self.gip_radioButton_3.isChecked():
                     self.get_data_from_field(2)
+                elif self.par_radioButton_4.isChecked():
+                    self.get_data_from_field(2)
                 else:
-                    pass
+                    print("Unknown radio")
             else:
                 print("Unknown tab")
         else:
@@ -330,6 +333,11 @@ class MainWindow(QtWidgets.QMainWindow):
             self.label_9.setText("b")
             self.label_9.setVisible(True)
             self.sec_line_spinBox_4.setVisible(True)
+
+    def par_radioButton_toggled_handler(self, status):
+        if status:
+            self.okr_radioButton_toggled_handler(True)
+            self.label_8.setText("p")
 
     def build_graphics(self):
         arg_dict = dict()
@@ -363,6 +371,11 @@ class MainWindow(QtWidgets.QMainWindow):
                 arg_dict['a'] = self.sec_line_spinBox_3.value()
                 arg_dict['b'] = self.sec_line_spinBox_4.value()
                 fig_cls = figures.Gip
+            elif self.par_radioButton_4.isChecked():
+                arg_dict['x'] = self.sec_line_spinBox_1.value()
+                arg_dict['y'] = self.sec_line_spinBox_2.value()
+                arg_dict['p'] = self.sec_line_spinBox_3.value()
+                fig_cls = figures.Par
 
         self.model.add_figure(fig_cls, self.debug_checkBox.isChecked(), **arg_dict)
         self.update()
@@ -475,6 +488,10 @@ class MainWindow(QtWidgets.QMainWindow):
                 self.sec_line_spinBox_2.setValue(self.data_from_field[0].y())
                 self.sec_line_spinBox_3.setValue(self.data_from_field[1].x() - self.data_from_field[0].x())
                 self.sec_line_spinBox_4.setValue(self.data_from_field[1].y() - self.data_from_field[0].y())
+            elif self.par_radioButton_4.isChecked():
+                self.sec_line_spinBox_1.setValue(self.data_from_field[0].x())
+                self.sec_line_spinBox_2.setValue(self.data_from_field[0].y())
+                self.sec_line_spinBox_3.setValue(self.data_from_field[1].x() - self.data_from_field[0].x())
         self.data_from_field.clear()
         self.update()
 
