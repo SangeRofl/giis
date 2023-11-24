@@ -1,3 +1,4 @@
+# Линкевич Александр Васильевич, группа 021701
 from PyQt6.QtCore import Qt
 from PyQt6.QtGui import QPainter, QColor, QFont, QBrush, QPen, QTransform, QPixmap
 from PyQt6.QtCore import QSize, Qt, QEvent, QTimer
