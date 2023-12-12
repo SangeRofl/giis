@@ -43,7 +43,24 @@ class FigureState:
         return self.pixels
 
     def add_message(self, message: str):
-        self.message+=message
+        self.message += message
+
+
+def multiply(matrix1, matrix2):
+    result = [[0 for i in range(len(matrix2[0]))] for i in range(len(matrix1))]
+    for i in range(len(matrix1)):
+        for j in range(len(matrix2[0])):
+            for k in range(len(matrix2)):
+                result[i][j] += matrix1[i][k] * matrix2[k][j]
+
+    return result
+
+def multiply_by_val(val, matrix):
+    result = [[matrix[i][j] for j in range(len(matrix[0]))] for i in range(len(matrix))]
+    for i in range(len(matrix)):
+        for j in range(len(matrix[0])):
+            result[i][j] *= val
+    return result
 
 
 class Figure(ABC):
@@ -580,6 +597,209 @@ class Par(Figure):
         self.cur_state.data['last_y'] = self.last_y
         self.cur_state.data['cur_step'] = self.cur_step
         self.cur_state.data['d'] = self.d
+        super().save_state()
+
+
+class ErmitInterpol(Figure):
+    def __init__(self, p1x: int, p1y: int, p4x: int, p4y: int, r1x: float, r1y: float, r4x: float, r4y: float, rect_width, rect_height):
+        super().__init__(rect_width, rect_height)
+        self.p1x = p1x
+        self.p1y = p1y
+        self.p4x = p4x
+        self.p4y = p4y
+        self.r1x = r1x
+        self.r1y = r1y
+        self.r4x = r4x
+        self.r4y = r4y
+        self.dt = 1/rect_width/10# 1 / max(abs(p1x - p4x), abs(p1y - p4y)) / 100
+        self.t = None
+        self.last_x = None
+        self.last_y = None
+        self.ermit_form = [
+            [2, -2, 1, 1],
+            [-3, 3, -2, -1],
+            [0, 0, 1, 0],
+            [1, 0, 0, 0]
+        ]
+        self.var_form = [
+            [p1x, p1y],
+            [p4x, p4y],
+            [r1x, r1y],
+            [r4x, r4y]
+        ]
+        self.res_var_form = multiply(self.ermit_form, self.var_form)
+        self.cur_step = -1
+
+    # первый шаг
+    def first_step(self):
+        self.cur_step += 1
+        self.t = 0
+        res_matrix = multiply([[self.t**3, self.t**2, self.t, 1]], self.res_var_form)
+        self.last_x, self.last_y = res_matrix[0][0], res_matrix[0][1]
+        self.cur_state.add_message(
+            f"Шаг {self.cur_step}: t = {self.t}, y = {self.last_y}, Plot(x, y) = ({round(self.last_x)}, {round(self.last_y)}")
+        self.draw_point(round(self.last_x), round(self.last_y))
+
+    # промежуточный шаг
+    def intermediate_step(self):
+        self.cur_step += 1
+        self.t += self.dt
+        res_matrix = multiply([[self.t ** 3, self.t ** 2, self.t, 1]], self.res_var_form)
+        self.last_x, self.last_y = res_matrix[0][0], res_matrix[0][1]
+        self.cur_state.add_message(
+            f"Шаг {self.cur_step}: t = {self.t}, y = {self.last_y}, Plot(x, y) = ({round(self.last_x)}, {round(self.last_y)}")
+        self.draw_point(round(self.last_x), round(self.last_y))
+
+    def check_state(self):
+        if self.t >= 1:
+            self.status = Status.FINISHED
+
+    def save_state(self):
+        self.cur_state.data['last_x'] = self.last_x
+        self.cur_state.data['last_y'] = self.last_y
+        self.cur_state.data['cur_step'] = self.cur_step
+        self.cur_state.data['t'] = self.t
+        super().save_state()
+
+
+class BezInterpol(Figure):
+    def __init__(self, p1x: int, p1y: int, p2x: int, p2y: int, p3x: int, p3y: int, p4x: int, p4y: int, rect_width, rect_height):
+        super().__init__(rect_width, rect_height)
+        self.p1x = p1x
+        self.p1y = p1y
+        self.p4x = p4x
+        self.p4y = p4y
+        self.p2x = p2x
+        self.p2y = p2y
+        self.p3x = p3x
+        self.p3y = p3y
+        self.dt = 1/rect_width/10
+        self.t = None
+        self.last_x = None
+        self.last_y = None
+        self.ermit_form = [
+            [-1, 3, -3, 1],
+            [3, -6, 3, 0],
+            [-3, 3, 0, 0],
+            [1, 0, 0, 0]
+        ]
+        self.var_form = [
+            [p1x, p1y],
+            [p2x, p2y],
+            [p3x, p3y],
+            [p4x, p4y]
+        ]
+        self.res_var_form = multiply(self.ermit_form, self.var_form)
+        self.cur_step = -1
+
+    # первый шаг
+    def first_step(self):
+        self.cur_step += 1
+        self.t = 0
+        res_matrix = multiply([[self.t**3, self.t**2, self.t, 1]], self.res_var_form)
+        self.last_x, self.last_y = res_matrix[0][0], res_matrix[0][1]
+        self.cur_state.add_message(
+            f"Шаг {self.cur_step}: t = {self.t}, y = {self.last_y}, Plot(x, y) = ({round(self.last_x)}, {round(self.last_y)}")
+        self.draw_point(round(self.last_x), round(self.last_y))
+
+    # промежуточный шаг
+    def intermediate_step(self):
+        self.cur_step += 1
+        self.t += self.dt
+        res_matrix = multiply([[self.t ** 3, self.t ** 2, self.t, 1]], self.res_var_form)
+        self.last_x, self.last_y = res_matrix[0][0], res_matrix[0][1]
+        self.cur_state.add_message(
+            f"Шаг {self.cur_step}: t = {self.t}, y = {self.last_y}, Plot(x, y) = ({round(self.last_x)}, {round(self.last_y)}")
+        self.draw_point(round(self.last_x), round(self.last_y))
+
+    def check_state(self):
+        if self.t >= 1:
+            self.status = Status.FINISHED
+
+    def save_state(self):
+        self.cur_state.data['last_x'] = self.last_x
+        self.cur_state.data['last_y'] = self.last_y
+        self.cur_state.data['cur_step'] = self.cur_step
+        self.cur_state.data['t'] = self.t
+        super().save_state()
+
+
+class SplineInterpol(Figure):
+    def __init__(self, points: list[tuple[int, int]], closed: bool, rect_width, rect_height):
+        super().__init__(rect_width, rect_height)
+        self.points = points
+        if closed:
+            self.points.append(points[0])
+            self.points.append(points[1])
+            self.points.append(points[2])
+        self.dt = 1/rect_width/10
+        self.t = None
+        self.spline_form = [
+            [-1, 3, -3, 1],
+            [3, -6, 3, 0],
+            [-3, 0, 3, 0],
+            [1, 4, 1, 0]
+        ]
+        self.var_form = None
+        self.res_var_form = None
+        self.cur_n = None
+        self.cur_step = -1
+
+    # первый шаг
+    def first_step(self):
+        self.cur_step += 1
+        self.t = 0
+        self.cur_n = 1
+        self.var_form = [
+            [self.points[self.cur_n-1][0], self.points[self.cur_n-1][1]],
+            [self.points[self.cur_n][0], self.points[self.cur_n][1]],
+            [self.points[self.cur_n + 1][0], self.points[self.cur_n + 1][1]],
+            [self.points[self.cur_n + 2][0], self.points[self.cur_n + 2][1]]
+        ]
+        self.res_var_form = multiply(self.spline_form, self.var_form)
+        res_matrix = multiply_by_val(1/6, multiply([[self.t**3, self.t**2, self.t, 1]], self.res_var_form))
+        x, y = res_matrix[0][0], res_matrix[0][1]
+        self.cur_state.add_message(
+            f"Шаг {self.cur_step}: segment = {self.cur_n}, t = {self.t}, x = {x}, y = {y}, Plot(x, y) = ({round(x)}, {round(y)}")
+        self.draw_point(round(x), round(y))
+
+    # промежуточный шаг
+    def intermediate_step(self):
+        if self.t >= 1:
+            self.cur_step += 1
+            self.t = 0
+            self.cur_n += 1
+            self.var_form = [
+                [self.points[self.cur_n - 1][0], self.points[self.cur_n - 1][1]],
+                [self.points[self.cur_n][0], self.points[self.cur_n][1]],
+                [self.points[self.cur_n + 1][0], self.points[self.cur_n + 1][1]],
+                [self.points[self.cur_n + 2][0], self.points[self.cur_n + 2][1]]
+            ]
+            self.res_var_form = multiply(self.spline_form, self.var_form)
+            res_matrix = multiply_by_val(1/6, multiply([[self.t**3, self.t**2, self.t, 1]], self.res_var_form))
+            x, y = res_matrix[0][0], res_matrix[0][1]
+            self.cur_state.add_message(
+                f"Шаг {self.cur_step}: segment = {self.cur_n}, t = {self.t}, x = {x}, y = {y}, Plot(x, y) = ({round(x)}, {round(y)}")
+            self.draw_point(round(x), round(y))
+        else:
+            self.cur_step += 1
+            self.t += self.dt
+            res_matrix = multiply_by_val(1/6, multiply([[self.t**3, self.t**2, self.t, 1]], self.res_var_form))
+            x, y = res_matrix[0][0], res_matrix[0][1]
+            self.cur_state.add_message(
+                f"Шаг {self.cur_step}: segment = {self.cur_n}, t = {self.t}, x = {x}, y = {y}, Plot(x, y) = ({round(x)}, {round(y)}")
+            self.draw_point(round(x), round(y))
+
+    def check_state(self):
+        if self.cur_n >= len(self.points) - 3 and self.t >= 1:
+            self.status = Status.FINISHED
+
+    def save_state(self):
+        self.cur_state.data['cur_step'] = self.cur_step
+        self.cur_state.data['t'] = self.t
+        self.cur_state.data['var_form'] = self.var_form
+        self.cur_state.data['res_var_form'] = self.res_var_form
+        self.cur_state.data['cur_n'] = self.cur_n
         super().save_state()
 
 
